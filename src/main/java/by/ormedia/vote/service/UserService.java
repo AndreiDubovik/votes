@@ -46,13 +46,13 @@ public class UserService implements IUserService{
 
 	@Override
 	public List<User> getUsers() {
+		List<User>list = null;
 		try {
-			return this.dao.getUsers();
+			list = this.dao.getUsers();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return new ArrayList<>();
 		}
+		return list!=null?list:new ArrayList<>();
 	}
 
 }

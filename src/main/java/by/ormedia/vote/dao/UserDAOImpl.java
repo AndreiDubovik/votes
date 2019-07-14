@@ -26,7 +26,7 @@ public class UserDAOImpl implements IUserDAO{
 		id = session.save(user);
 		session.getTransaction().commit();
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new SQLException();
 		}finally{
 			if(session!=null&&session.isOpen())session.close();
 		}
@@ -53,13 +53,14 @@ public class UserDAOImpl implements IUserDAO{
 			session = DatabaseUtil.getSessionFactory().openSession();
 			user = session.get(User.class, id);
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new SQLException();
 		}finally{
 			if(session!=null&&session.isOpen())session.close();
 		}
 		return user;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<User> getUsers() throws SQLException {
 		Session session = null;
@@ -68,11 +69,11 @@ public class UserDAOImpl implements IUserDAO{
 			session = DatabaseUtil.getSessionFactory().openSession();
 			list = session.createQuery("from User").getResultList();
 		}catch(Exception e){
-			e.printStackTrace();
+			throw new SQLException();
 		}finally{
 			if(session!=null&&session.isOpen())session.close();
 		}
-		return list!=null?list:new ArrayList<>();
+		return list;
 	}
 
 }
