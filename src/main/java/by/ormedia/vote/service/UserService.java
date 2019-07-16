@@ -40,8 +40,13 @@ public class UserService implements IUserService{
 
 	@Override
 	public User getUserById(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		User user = null;
+		try{
+			user = dao.getUserById(id);
+		}catch(SQLException e){
+			e.printStackTrace();
+		}
+		return user;
 	}
 
 	@Override
