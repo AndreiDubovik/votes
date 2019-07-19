@@ -5,7 +5,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +22,14 @@ public class UserDAOImpl implements IUserDAO{
 	public Serializable addUser(User user) throws SQLException {
 		Session session = null;
 		Serializable id = null;
+		Transaction tr = null;
 		try{
 		session = DatabaseUtil.getSessionFactory().openSession();
-		session.beginTransaction();
+		tr = session.beginTransaction();
 		id = session.save(user);
-		session.getTransaction().commit();
-		}catch(Exception e){
+		tr.commit();
+		}catch(HibernateException e){
+			if(tr!=null)tr.rollback();
 			throw new SQLException();
 		}finally{
 			if(session!=null&&session.isOpen())session.close();
@@ -35,14 +39,38 @@ public class UserDAOImpl implements IUserDAO{
 
 	@Override
 	public boolean updateUser(User user) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		Session session = null;
+		Transaction tr = null;
+		try{
+		session = DatabaseUtil.getSessionFactory().openSession();
+		tr = session.beginTransaction();
+		session.update(user);
+		tr.commit();
+		}catch(HibernateException e){
+			if(tr!=null)tr.rollback();
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return true;
 	}
 
 	@Override
 	public boolean deleteUser(User user) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		Session session = null;
+		Transaction tr = null;
+		try{
+		session = DatabaseUtil.getSessionFactory().openSession();
+		tr = session.beginTransaction();
+		session.delete(user);
+		tr.commit();
+		}catch(HibernateException e){
+			if(tr!=null)tr.rollback();
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return true;
 	}
 
 	@Override
@@ -52,7 +80,7 @@ public class UserDAOImpl implements IUserDAO{
 		try{
 			session = DatabaseUtil.getSessionFactory().openSession();
 			user = session.get(User.class, id);
-		}catch(Exception e){
+		}catch(HibernateException e){
 			throw new SQLException();
 		}finally{
 			if(session!=null&&session.isOpen())session.close();

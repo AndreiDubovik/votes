@@ -68,6 +68,11 @@ public class Subject implements Serializable {
 	public void setItems(Set<Item> items) {
 		this.items = items;
 	}
+	@Override
+	public String toString() {
+		return "Subject [id=" + id + ", subject=" + subject + ", initiator=" + initiator + ", isOpen=" + isOpen
+				+ ", items=" + items + "]";
+	}
 
 	
 }

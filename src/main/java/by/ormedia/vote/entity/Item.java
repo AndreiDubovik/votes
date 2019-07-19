@@ -57,6 +57,10 @@ public class Item implements Serializable {
 	public void setSum(int sum) {
 		this.sum = sum;
 	}
+	@Override
+	public String toString() {
+		return "Item [id=" + id + ", subject=" + subject + ", text=" + text + ", sum=" + sum + "]";
+	}
 	
 	
 }
