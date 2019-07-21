@@ -28,6 +28,7 @@ public class JSONUtils {
 			JSONObject sub = (JSONObject)ob.get("subject");
 			subject.setSubject((String)sub.get("subjectName"));
 			JSONArray items = (JSONArray)sub.get("items");
+			@SuppressWarnings("rawtypes")
 			Iterator it = items.iterator();
 			Set<Item>set = new HashSet<>();
 			while(it.hasNext()){
@@ -51,7 +52,7 @@ public class JSONUtils {
 				tickets.add(ticket);
 			}
 			subject.setVoteTickets(tickets);
-			//subject.setItems(set);
+			subject.setItems(set);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
