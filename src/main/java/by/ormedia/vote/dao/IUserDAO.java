@@ -13,5 +13,5 @@ public interface IUserDAO {
 	public boolean deleteUser(User user) throws SQLException;
 	public User getUserById(long id) throws SQLException;
 	public List<User> getUsers() throws SQLException;
-
+	public User getUserByEmail(String email) throws SQLException;
 }

@@ -38,6 +38,8 @@ public class Subject implements Serializable {
 	private boolean isOpen;
 	@OneToMany(mappedBy="subject", targetEntity=by.ormedia.vote.entity.Item.class)
 	private Set<Item>items = new HashSet<>();
+	@OneToMany(mappedBy="subject", targetEntity=by.ormedia.vote.entity.VoteTicket.class)
+	private Set<VoteTicket>voteTickets = new HashSet<>();
 	public long getId() {
 		return id;
 	}
@@ -67,6 +69,14 @@ public class Subject implements Serializable {
 	}
 	public void setItems(Set<Item> items) {
 		this.items = items;
+	}
+	
+	
+	public Set<VoteTicket> getVoteTickets() {
+		return voteTickets;
+	}
+	public void setVoteTickets(Set<VoteTicket> voteTickets) {
+		this.voteTickets = voteTickets;
 	}
 	@Override
 	public String toString() {

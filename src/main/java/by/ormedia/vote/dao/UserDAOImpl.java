@@ -104,4 +104,20 @@ public class UserDAOImpl implements IUserDAO{
 		return list;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public User getUserByEmail(String email) throws SQLException {
+		Session session = null;
+		List<User> users = null;
+		try{
+			session = DatabaseUtil.getSessionFactory().openSession();
+			users = session.createQuery("from User where email=:em").setParameter("em", email).getResultList();
+		}catch(Exception e){
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return users!=null&&users.size()!=0?users.get(0):null;
+	}
+
 }

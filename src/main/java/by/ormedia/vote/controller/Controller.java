@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import by.ormedia.vote.entity.Subject;
+import by.ormedia.vote.mail.IMailSender;
 import by.ormedia.vote.service.ISubjectService;
 import by.ormedia.vote.service.IUserService;
 import by.ormedia.vote.util.JSONUtils;
@@ -16,12 +17,17 @@ import by.ormedia.vote.util.JSONUtils;
 public class Controller {
 	
 	@Autowired
-	private IUserService userService;
+	private IMailSender mailSender;
+	
+	@Autowired
+	private ISubjectService subjectService;
 	
 	@PostMapping("/newsubject")
 	public void test(@RequestBody String body){
 		Subject subject = JSONUtils.getSubjectFromJSON(body);
-		System.out.println(subject);		
+		subjectService.addSubject(subject);
+		mailSender.sendLinks(subject);
+		mailSender.respondInitiator(subject);
 	}
 
 }

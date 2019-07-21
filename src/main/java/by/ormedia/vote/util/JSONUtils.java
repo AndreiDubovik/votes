@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 import by.ormedia.vote.entity.Item;
 import by.ormedia.vote.entity.Subject;
 import by.ormedia.vote.entity.User;
+import by.ormedia.vote.entity.VoteTicket;
 
 public class JSONUtils {
 	
@@ -26,17 +27,31 @@ public class JSONUtils {
 			subject.setInitiator(creator);
 			JSONObject sub = (JSONObject)ob.get("subject");
 			subject.setSubject((String)sub.get("subjectName"));
-			JSONArray items = (JSONArray)ob.get("items");
+			JSONArray items = (JSONArray)sub.get("items");
 			Iterator it = items.iterator();
 			Set<Item>set = new HashSet<>();
 			while(it.hasNext()){
 				Item item = new Item();
-				item.setText((String)it.next());
+				Object itemString = it.next();
+				item.setText((String)itemString);
 				item.setSubject(subject);
 				set.add(item);
 			}
-			subject.setItems(set);
-			
+			JSONArray users = (JSONArray)ob.get("users");
+			it = users.iterator();
+			Set<VoteTicket>tickets = new HashSet<>();
+			while(it.hasNext()){
+				VoteTicket ticket = new VoteTicket();
+				User user = new User();
+				user.setEmail((String)it.next());
+				ticket.setUser(user);
+				ticket.setSubject(subject);
+				String key = Long.toHexString((long)(Long.MAX_VALUE*Math.random()));
+				ticket.setKeycode(key);
+				tickets.add(ticket);
+			}
+			subject.setVoteTickets(tickets);
+			//subject.setItems(set);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
