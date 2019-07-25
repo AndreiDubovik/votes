@@ -21,70 +21,42 @@ import by.ormedia.vote.util.DatabaseUtil;
 @Transactional
 @Repository
 public class SubjectDAOImpl implements ISubjectDAO{
-
-	@Autowired
-	private IUserDAO userDAO;
 	
 	@Autowired
-	private IItemDAO itemDAO;
-	
-	@Autowired
-	private IVoteTicketDAO voteDAO;
+	private IUserDAO userDao;
 	
 	@Override
 	public Serializable addSubject(Subject subject) throws SQLException {
 		Session session = null;
 		Serializable id = null;
-		Transaction t = null;
+		Transaction tr = null;
+		User user0 = userDao.getUserByEmail(subject.getInitiator().getEmail());
+		if(user0!=null)subject.setInitiator(user0);
+		Set<VoteTicket>tickets0 = subject.getVoteTickets();
+		for(VoteTicket vt:tickets0){
+			User us = userDao.getUserByEmail(vt.getUser().getEmail());
+			if(us!=null)vt.setUser(us);
+		}
 		try{
-			Set<VoteTicket>tickets = subject.getVoteTickets();
-			session = DatabaseUtil.getSessionFactory().openSession();
-			t = session.beginTransaction();
-			User user0 = subject.getInitiator();
-			try{
-				User user = userDAO.getUserByEmail(user0.getEmail());
-				if(user!=null){
-					user0.setId(user.getId());
-				}else{
-					userDAO.addUser(user0);
-				}
-			}catch(SQLException e3){
-				e3.printStackTrace();
-				throw new HibernateException(e3);
-			}
+			session = DatabaseUtil.getSessionFactory().getCurrentSession();
+			tr = session.beginTransaction();
+			User creator = subject.getInitiator();
+			if(creator.getId()==0)session.save(creator);
 			id = session.save(subject);
 			Set<Item>items = subject.getItems();
-			try{
-				for(Item i:items)itemDAO.addItem(i);
-			}catch(SQLException e2){
-				e2.printStackTrace();
-				throw new HibernateException(e2);
+			for(Item i:items)session.save(i);
+			Set<VoteTicket>tickets = subject.getVoteTickets();
+			for(VoteTicket vt:tickets){
+				User user = vt.getUser();
+				if(user.getId()==0)session.save(user);
+				session.save(vt);
 			}
-			
-			try{
-				for(VoteTicket vt:tickets){
-					User voteUser = vt.getUser();
-					try{
-						User user = userDAO.getUserByEmail(voteUser.getEmail());
-						if(user!=null){
-							voteUser.setId(user.getId());
-						}else{
-							userDAO.addUser(voteUser);
-						}
-					}catch(SQLException e5){
-						e5.printStackTrace();
-						throw new HibernateException(e5);
-					}
-					voteDAO.addVoteTicket(vt);
-				}
-			}catch(SQLException e4){
-				e4.printStackTrace();
-				throw new HibernateException(e4);
-			}
-			t.commit();
+			tr.commit();
 		}catch(HibernateException e){
-			if(t!=null)t.rollback();
+			if(tr!=null)tr.rollback();
 			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
 		}
 		return id;
 	}
