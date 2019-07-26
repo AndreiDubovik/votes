@@ -62,5 +62,9 @@ public class Item implements Serializable {
 		return "Item [id=" + id + ", subject=" + subject + ", text=" + text + ", sum=" + sum + "]";
 	}
 	
+	public void vote(){
+		this.sum++;
+	}
+	
 	
 }

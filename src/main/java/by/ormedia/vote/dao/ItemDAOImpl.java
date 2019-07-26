@@ -37,8 +37,20 @@ public class ItemDAOImpl implements IItemDAO{
 
 	@Override
 	public boolean updateItem(Item item) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		Session session = null;
+		Transaction tr = null;
+		try{
+		session = DatabaseUtil.getSessionFactory().openSession();
+		tr = session.beginTransaction();
+		session.update(item);
+		tr.commit();
+		}catch(HibernateException e){
+			if(tr!=null)tr.rollback();
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return true;
 	}
 
 	@Override
@@ -49,8 +61,17 @@ public class ItemDAOImpl implements IItemDAO{
 
 	@Override
 	public Item getItemById(long id) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = null;
+		Item item = null;
+		try{
+			session = DatabaseUtil.getSessionFactory().openSession();
+			item = session.get(Item.class, id);
+		}catch(HibernateException e){
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return item;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import org.hibernate.Transaction;
 import org.springframework.stereotype.Repository;
 
 import by.ormedia.vote.entity.Subject;
+import by.ormedia.vote.entity.User;
 import by.ormedia.vote.entity.VoteTicket;
 import by.ormedia.vote.util.DatabaseUtil;
 
@@ -18,14 +19,35 @@ public class VoteTicketDAOImpl implements IVoteTicketDAO{
 
 	@Override
 	public boolean updateVoteTicket(VoteTicket vote) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		Session session = null;
+		Transaction tr = null;
+		try{
+		session = DatabaseUtil.getSessionFactory().openSession();
+		tr = session.beginTransaction();
+		session.update(vote);
+		tr.commit();
+		}catch(HibernateException e){
+			if(tr!=null)tr.rollback();
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return true;
 	}
 
 	@Override
 	public VoteTicket getVoteTicketById(long id) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = null;
+		VoteTicket vt = null;
+		try{
+			session = DatabaseUtil.getSessionFactory().openSession();
+			vt = session.get(VoteTicket.class, id);
+		}catch(HibernateException e){
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return vt;
 	}
 
 	@Override
