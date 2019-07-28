@@ -28,7 +28,7 @@ public class Controller {
 	public static final String GET_SUBJECT_INFO = "/getsubjectinfo";
 	public static final String VOTE_LINK = "/votelink";
 	public static final String CLOSE_VOTE = "/close";
-	public static final String URL = "localhost:8080";
+	public static final String URL = "env-2982050.mycloud.by";
 	public static final String VOTE_TICKET_ID = "voteid";
 	public static final String ITEM_ID = "item";
 	public static final String KEY_CODE = "keycode";
