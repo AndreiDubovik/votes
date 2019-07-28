@@ -31,8 +31,12 @@ public class SubjectService implements ISubjectService{
 
 	@Override
 	public boolean updateSubject(Subject subject) {
-		// TODO Auto-generated method stub
-		return false;
+		try {
+			return this.dao.updateSubject(subject);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	@Override
@@ -43,8 +47,13 @@ public class SubjectService implements ISubjectService{
 
 	@Override
 	public Subject getSubjectById(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		Subject subject = null;
+		try {
+			subject = this.dao.getSubjectById(id);
+		} catch (SQLException e){ 
+			e.printStackTrace();
+		}
+		return subject;
 	}
 
 	@Override

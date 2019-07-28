@@ -67,8 +67,19 @@ public class EmailSender implements IMailSender{
 
 	@Override
 	public void respondInitiator(Subject subject) {
-		System.out.println("I am here");
-		
+		StringBuilder sb = new StringBuilder();
+		sb.append("Вами было создано голосование:");
+		nextLine(sb);
+		sb.append(subject.getSubject());
+		nextLine(sb);
+		sb.append("Просмотреть состояние можно по этой ссылке:");
+		nextLine(sb);
+		sb.append(this.getVoteInfoLink(subject));
+		nextLine(sb);
+		sb.append("Закрыть голосование можно по этой ссылке:");
+		nextLine(sb);
+		sb.append(this.getCloseVoteLink(subject));
+		send(VOTE_IS_CREATED,sb.toString(),subject.getInitiator().getEmail());
 	}
 	
 	private void nextLine(StringBuilder sb){
@@ -98,5 +109,15 @@ public class EmailSender implements IMailSender{
 		return "http://"+Controller.URL+Controller.VOTE_LINK+"?"+Controller.ITEM_ID+"="+it.getId()
 		+"&"+Controller.VOTE_TICKET_ID+"="+vt.getId()+"&"+Controller.KEY_CODE+"="+vt.getKeycode();
 	}
+	
+	private String getVoteInfoLink(Subject subject){
+		return "http://"+Controller.URL+
+				Controller.GET_SUBJECT_INFO+"?id="+subject.getId();
+	}
 
+	private String getCloseVoteLink(Subject subject){
+		return "http://"+Controller.URL+Controller.CLOSE_VOTE
+				+"?subjectid="+subject.getId()
+				+"&userid="+subject.getInitiator().getId();
+	}
 }

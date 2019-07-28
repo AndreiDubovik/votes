@@ -63,8 +63,20 @@ public class SubjectDAOImpl implements ISubjectDAO{
 
 	@Override
 	public boolean updateSubject(Subject subject) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		Session session = null;
+		Transaction tr = null;
+		try{
+		session = DatabaseUtil.getSessionFactory().openSession();
+		tr = session.beginTransaction();
+		session.update(subject);
+		tr.commit();
+		}catch(HibernateException e){
+			if(tr!=null)tr.rollback();
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return true;
 	}
 
 	@Override
@@ -75,8 +87,17 @@ public class SubjectDAOImpl implements ISubjectDAO{
 
 	@Override
 	public Subject getSubjectById(long id) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		Session session = null;
+		Subject subject = null;
+		try{
+			session = DatabaseUtil.getSessionFactory().openSession();
+			subject = session.get(Subject.class, id);
+		}catch(HibernateException e){
+			throw new SQLException();
+		}finally{
+			if(session!=null&&session.isOpen())session.close();
+		}
+		return subject;
 	}
 
 	@Override
